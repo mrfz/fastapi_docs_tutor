@@ -1,0 +1,14 @@
+*.mypy_cache
+*.pytest_cache
+*.pyc
+*.pyo
+*.swp
+*.swo
+*.tmp
+*.egg-info
+*.egg
+*.egg-link
+*.dist-info
+
+__pycache__
+*.code_workspace
