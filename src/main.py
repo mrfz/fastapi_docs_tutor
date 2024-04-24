@@ -71,7 +71,7 @@ async def read_user_item(
 
 	Returns:
 
-		dict[str, str]: item
+		dict[str, object]: item
 	"""
 	item = {'item_id': item_id, 'owner_id': user_id}
 	if q:
@@ -80,4 +80,27 @@ async def read_user_item(
 		item.update(
 			{'description': 'This is an amazing item that has a long description'}
 		)
+	return item
+
+
+@app.get('/items/{item_id}')
+async def read_item_required(
+	item_id: str, needy: str, skip: int = 0, limit: int | None = None
+) -> dict[str, object]:
+	"""Get an item
+
+	Args:
+
+		item_id (str): item id
+
+		needy (str): needy
+
+		skip (int, optional): skip first n items. Defaults to 0.
+
+		limit (int | None, optional): maximum number of items. Defaults to None.
+	Returns:
+
+		dict[str, object]: item
+	"""
+	item = {'item_id': item_id, 'needy': needy, 'skip': skip, 'limit': limit}
 	return item
