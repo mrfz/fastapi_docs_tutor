@@ -51,3 +51,33 @@ async def read_item(
 			{'description': 'This is an amazing item that has a long description'}
 		)
 	return item
+
+
+@app.get('/users/{user_id}/items/{item_id}')
+async def read_user_item(
+	user_id: int, item_id: str, q: str | None = None, short: bool = False
+) -> dict[str, object]:
+	"""Get an user item
+
+	Args:
+
+		user_id (int): user id
+
+		item_id (str): item id
+
+		q (str | None, optional): query. Defaults to None.
+
+		short (bool, optional): short. Defaults to False.
+
+	Returns:
+
+		dict[str, str]: item
+	"""
+	item = {'item_id': item_id, 'owner_id': user_id}
+	if q:
+		item.update({'q': q})
+	if not short:
+		item.update(
+			{'description': 'This is an amazing item that has a long description'}
+		)
+	return item
