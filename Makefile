@@ -9,3 +9,7 @@ mypy:
 
 .PHONY: codestyle
 codestyle: ruff mypy
+
+.PHONY: test
+test:
+	poetry run pytest -c pyproject.toml 
