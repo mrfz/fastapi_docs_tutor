@@ -4,21 +4,61 @@ from src.main import app
 
 client = TestClient(app)
 
-
-def test_read_main() -> None:
-	"""
-	Test the read operation of the main API endpoint.
-
-	This function sends a GET request to the root endpoint ("/") of the main API
-	and checks if the response status code is 200 (indicating a successful request)
-	and if the response JSON matches the expected value: {"message": "Hello World"}.
-
-	Parameters:
-	    None
-
-	Returns:
-	    None
-	"""
-	response = client.get('/')
+def test_read_item() -> None:
+	response = client.get('/items/foo', headers={'X-Token': 'coneofsilence'})
 	assert response.status_code == 200
-	assert response.json() == {'message': 'Hello World'}
+	assert response.json() == {
+		'id': 'foo',
+		'title': 'Foo',
+		'description': 'There goes my hero',
+	}
+
+
+def test_read_item_bad_token() -> None:
+	response = client.get('/items/foo', headers={'X-Token': 'hailhydra'})
+	assert response.status_code == 400
+	assert response.json() == {'detail': 'Invalid X-Token header'}
+
+
+def test_read_nonexistent_item() -> None:
+	response = client.get('/items/baz', headers={'X-Token': 'coneofsilence'})
+	assert response.status_code == 404
+	assert response.json() == {'detail': 'Item not found'}
+
+
+def test_create_item() -> None:
+	response = client.post(
+		'/items/',
+		headers={'X-Token': 'coneofsilence'},
+		json={'id': 'foobar', 'title': 'Foo Bar', 'description': 'The Foo Barters'},
+	)
+	assert response.status_code == 200
+	assert response.json() == {
+		'id': 'foobar',
+		'title': 'Foo Bar',
+		'description': 'The Foo Barters',
+	}
+
+
+def test_create_item_bad_token() -> None:
+	response = client.post(
+		'/items/',
+		headers={'X-Token': 'hailhydra'},
+		json={'id': 'bazz', 'title': 'Bazz', 'description': 'Drop the bazz'},
+	)
+	assert response.status_code == 400
+	assert response.json() == {'detail': 'Invalid X-Token header'}
+
+
+def test_create_existing_item() -> None:
+	response = client.post(
+		'/items/',
+		headers={'X-Token': 'coneofsilence'},
+		json={
+			'id': 'foo',
+			'title': 'The Foo ID Stealers',
+			'description': 'There goes my stealer',
+		},
+	)
+	assert response.status_code == 409
+	assert response.json() == {'detail': 'Item already exists'}
